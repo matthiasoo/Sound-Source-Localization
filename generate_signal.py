@@ -47,8 +47,7 @@ for i, filename in enumerate(files):
         recorder.run_circle()
 
     except Exception as e:
-        print(f"!!! An error occurred while processing {filename}: {e}")
+        print(f"!!! ERROR with {filename}: {e}")
 
-print("\n" + "="*40)
-print("=== ALL RECORDINGS GENERATED SUCCESSFULLY ===")
-print("Files are located in: signal/dynamic/")
+print("\n" + "-"*40)
+print("--- DONE ---")
