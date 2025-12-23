@@ -15,13 +15,13 @@ drone_signal = DroneSignalGenerator(
 geom_folder = Path('geom')
 
 files = [
-    "2_mics.xml",
-    "rect_4.xml",
+    # "2_mics.xml",
+    # "rect_4.xml",
     "rect_16.xml",
-    "rect_64.xml",
-    "ring_32.xml",
-    "spiral_64.xml",
-    "sunflower_64.xml",
+    # "rect_64.xml",
+    # "ring_32.xml",
+    # "spiral_64.xml",
+    # "sunflower_64.xml",
 ]
 
 print(f"--- STARTING SIGNAL GENERATION ---")
@@ -43,8 +43,8 @@ for i, filename in enumerate(files):
         recorder = SignalRecorder(fpath, drone_signal)
 
         recorder.run_linear()
-        recorder.run_diagonal()
-        recorder.run_circle()
+        # recorder.run_diagonal()
+        # recorder.run_circle()
 
     except Exception as e:
         print(f"!!! ERROR with {filename}: {e}")

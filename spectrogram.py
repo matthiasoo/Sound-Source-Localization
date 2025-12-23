@@ -56,4 +56,4 @@ def conductFullAnalysis(audio, frameSize, hopSize, time) :
     drawSpectrogram(stftLog, samples, hopSize)
     drawSpectrumAtTime(frs, spectrum)
 
-conductFullAnalysis("signal/dynamic/rect_4_linear.wav", 512, 256, 5.0)
+conductFullAnalysis("signal/dynamic/sunflower_64_linear.wav", 128, 64, 5.0)

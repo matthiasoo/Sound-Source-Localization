@@ -44,6 +44,30 @@ class Beamformer:
         step = (v_max - v_min) / (num - 1)
         return v_min + (i * step)
 
+    def _calc_beam_width(self, map_data, grid, db_drop=3):
+        map_db = 10 * np.log10(map_data.T + 1e-12)
+
+        max_val = np.max(map_db)
+        limit = max_val - db_drop
+
+        mask = map_db >= limit
+
+        if not np.any(mask):
+            return 0.0, 0.0
+
+        x_indices = np.where(np.any(mask, axis=0))[0]
+        y_indices = np.where(np.any(mask, axis=1))[0]
+
+        if len(x_indices) == 0 or len(y_indices) == 0:
+            return 0.0, 0.0
+
+        pixel_size = 0.01
+
+        width_x = (x_indices[-1] - x_indices[0] + 1) * pixel_size
+        width_y = (y_indices[-1] - y_indices[0] + 1) * pixel_size
+
+        return width_x, width_y
+
     def _run(self):
         samplerate, wavData = wavfile.read(self.inputfile)
         ts = ac.TimeSamples(data=wavData, sample_freq=samplerate)
@@ -74,15 +98,29 @@ class Beamformer:
         max_frame_time = 0
 
         self.i = 0
+        self.frames = []
+        self.widths = []
+
         for block in gen:
             pt1 = time.thread_time()
             perf_counter_start = time.perf_counter()
 
-            tempData = block
-            tempTS = ac.TimeSamples(data=tempData, sample_freq=samplerate)
-            ps = ac.PowerSpectra(source=tempTS, block_size=128, overlap='50%', window='Hanning')
+            # tempData = block
+            tempTS = ac.TimeSamples(data=block, sample_freq=samplerate)
+            ps = ac.PowerSpectra(source=tempTS, block_size=128, overlap='50%', window='Hanning', precision='complex128')
 
-            bb = ac.BeamformerFunctional(freq_data=ps, steer=st, gamma=fbf_gamma, r_diag=False)
+            original_csm =ps.csm
+
+            eye_matrix = np.eye(original_csm.shape[1])
+
+            reg_factor = 1e-5
+
+            regularized_csm = original_csm + reg_factor * eye_matrix
+
+            ps_import = ac.PowerSpectraImport(csm=regularized_csm, frequencies=ps.fftfreq())
+
+            # bb = ac.BeamformerFunctional(freq_data=ps, steer=st, gamma=fbf_gamma, r_diag=False)
+            bb = ac.BeamformerFunctional(freq_data=ps_import, steer=st, gamma=fbf_gamma, r_diag=False)
 
             tempRes = np.sum(bb.result[4:32], 0)
             # tempRes = np.nan_to_num(tempRes, nan=0.0)
@@ -108,7 +146,7 @@ class Beamformer:
             )
             fst = ac.SteeringVector(grid=frg, mics=mg, steer_type='classic')
 
-            bf = ac.BeamformerFunctional(freq_data=ps, steer=fst, gamma=fbf_gamma, r_diag=False)
+            bf = ac.BeamformerFunctional(freq_data=ps_import, steer=fst, gamma=fbf_gamma, r_diag=False)
 
             tempFRes = np.sum(bf.result[8:16], 0)
             # tempFRes = np.nan_to_num(tempFRes, nan=0.0)
@@ -117,6 +155,9 @@ class Beamformer:
             fp = np.unravel_index(np.argmax(fr), fr.shape)
             fpx = self._map_index_to_range(fp[0], fr.shape[0], frg.extend()[0], frg.extend()[1])
             fpy = self._map_index_to_range(fp[1], fr.shape[1], frg.extend()[2], frg.extend()[3])
+
+            wx, wy = self._calc_beam_width(fr, frg, db_drop=3)
+            self.widths.append((wx, wy))
 
             self.frames.append((r, (px, py), fr, (fpx, fpy)))
 
@@ -151,6 +192,9 @@ class Beamformer:
 
         np.save(self.paths["data"] / f"{self.inputfile.stem}_g{self.gamma}_points.npy", points)
         np.save(self.paths["data"] / f"{self.inputfile.stem}_g{self.gamma}_focuspoints.npy", focus_points)
+
+        widths_arr = np.array(self.widths)
+        np.save(self.paths["data"] / f"{self.inputfile.stem}_widths.npy", widths_arr)
 
         self._generate_animation(rg, frg_span, FPS, frames_count)
 

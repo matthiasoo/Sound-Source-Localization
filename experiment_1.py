@@ -1,4 +1,4 @@
-# The influence of microphone array geometry on the quality of sound source localization
+# Wpływ geometrii na jakość lokalizacji źródła dźwięku
 
 from pathlib import Path
 from Beamformer import Beamformer

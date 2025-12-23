@@ -105,7 +105,8 @@ class SignalRecorder:
             sample_freq=self.signal.sample_freq,
             num_samples=self.signal.num_samples,
             seed=100,
-            rms=0.05
+            # rms=0.05
+            rms=0.8
         )
         n = ac.UncorrelatedNoiseSource(
             signal=wn_gen,
