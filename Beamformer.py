@@ -44,7 +44,7 @@ class Beamformer:
         step = (v_max - v_min) / (num - 1)
         return v_min + (i * step)
 
-    def _calc_beam_width(self, map_data, grid, db_drop=3):
+    def _calc_beam_width(self, map_data, grid, pixel_size, db_drop=3):
         map_db = 10 * np.log10(map_data.T + 1e-12)
 
         max_val = np.max(map_db)
@@ -60,8 +60,6 @@ class Beamformer:
 
         if len(x_indices) == 0 or len(y_indices) == 0:
             return 0.0, 0.0
-
-        pixel_size = 0.01
 
         width_x = (x_indices[-1] - x_indices[0] + 1) * pixel_size
         width_y = (y_indices[-1] - y_indices[0] + 1) * pixel_size
@@ -142,7 +140,7 @@ class Beamformer:
             frg = ac.RectGrid(
                 x_min=px - frg_span, x_max=px + frg_span,
                 y_min=py - frg_span, y_max=py + frg_span,
-                z=10, increment=0.01,
+                z=10, increment=0.002,
             )
             fst = ac.SteeringVector(grid=frg, mics=mg, steer_type='classic')
 
