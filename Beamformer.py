@@ -137,10 +137,12 @@ class Beamformer:
             pt2 = time.thread_time()
             pt += pt2 - pt1
 
+            INCREMENT = 0.002
+
             frg = ac.RectGrid(
                 x_min=px - frg_span, x_max=px + frg_span,
                 y_min=py - frg_span, y_max=py + frg_span,
-                z=10, increment=0.002,
+                z=10, increment=INCREMENT,
             )
             fst = ac.SteeringVector(grid=frg, mics=mg, steer_type='classic')
 
@@ -154,7 +156,7 @@ class Beamformer:
             fpx = self._map_index_to_range(fp[0], fr.shape[0], frg.extend()[0], frg.extend()[1])
             fpy = self._map_index_to_range(fp[1], fr.shape[1], frg.extend()[2], frg.extend()[3])
 
-            wx, wy = self._calc_beam_width(fr, frg, db_drop=3)
+            wx, wy = self._calc_beam_width(fr, frg, INCREMENT, db_drop=3)
             self.widths.append((wx, wy))
 
             self.frames.append((r, (px, py), fr, (fpx, fpy)))

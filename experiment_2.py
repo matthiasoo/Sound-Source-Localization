@@ -10,10 +10,6 @@ import time
 import os
 from Beamformer import Beamformer
 
-# --- TU WKLEJ SWOJĄ KLASĘ BEAMFORMER (LUB ZAIMPORTUJ JĄ) ---
-# (Dla przejrzystości pomijam wklejanie całej klasy tutaj,
-#  zakładam że masz ją zdefiniowaną powyżej w tym samym pliku)
-
 # ==========================================
 # KONFIGURACJA EKSPERYMENTU 2
 # ==========================================
@@ -49,8 +45,6 @@ for geom_name in geometries:
             continue
 
         try:
-            # Uruchomienie Twojej klasy Beamformer
-            # Klasa sama stworzy odpowiednie podfoldery w results/
             bf = Beamformer(
                 geom_path=geom_path,
                 inputfile_path=wav_path,
