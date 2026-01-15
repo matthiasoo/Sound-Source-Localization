@@ -290,7 +290,7 @@ class Beamformer3D:
         F_INCREMENT = 0.05
         frg_span = 0.4
 
-        rg = ac.RectGrid(
+        rg = ac.RectGrid3D(
             x_min=-6, x_max=+6,
             y_min=-6, y_max=+6,
             z_min=-6, z_max=+6,
@@ -306,7 +306,7 @@ class Beamformer3D:
 
         gen = ts.result(frame_length)
         print("Frames to be generated: ", frames_count)
-        print(f"Grid size: {rg.size}")
+        print(f"Grid size: {rg.size}, {rg.shape}")
 
         gen = ts.result(frame_length)
 
@@ -353,7 +353,7 @@ class Beamformer3D:
             pt2 = time.thread_time()
             pt += pt2 - pt1
 
-            frg = ac.RectGrid(
+            frg = ac.RectGrid3D(
                 x_min=px - frg_span, x_max=px + frg_span,
                 y_min=py - frg_span, y_max=py + frg_span,
                 z_min=pz - frg_span, z_max=pz + frg_span,
