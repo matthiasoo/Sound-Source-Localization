@@ -22,6 +22,7 @@ files = [
     # "ring_32.xml",
     # "spiral_64.xml",
     # "sunflower_64.xml",
+    # "octagon_8ch.xml"
 ]
 
 print(f"--- STARTING SIGNAL GENERATION ---")
@@ -43,8 +44,8 @@ for i, filename in enumerate(files):
         recorder = SignalRecorder(fpath, drone_signal)
 
         recorder.run_linear()
-        # recorder.run_diagonal()
-        # recorder.run_circle()
+        recorder.run_diagonal()
+        recorder.run_circle()
 
     except Exception as e:
         print(f"!!! ERROR with {filename}: {e}")

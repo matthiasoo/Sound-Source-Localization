@@ -4,7 +4,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-GEOM_FILE = "geom_3d/cube_14.xml"
+GEOM_FILE = "geom_3d/sphere_fib_64.xml"
 Z_START = 5.0
 Z_END = -5.0
 RADIUS = 4.0
